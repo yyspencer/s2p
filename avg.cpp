@@ -126,6 +126,7 @@ void solve(string filename){
 				tmp.sxxval=20*log10(sqrt(tmp.sxx.X*tmp.sxx.X+tmp.sxx.Y*tmp.sxx.Y));
 				break;
 		}
+		tmp.freq/=1000000;
 		data.pub(tmp);
 	}
 	/*
@@ -137,13 +138,17 @@ void solve(string filename){
 		cout<<"Database error, no data in database"<<out;
 		return;
 	}
-	cout<<"For average, please enter starting and end points"<<out;
+	cout<<"For average, please enter starting and end points in MHz"<<out;
 	cout<<"Range is "<<data[0].freq<<" to "<<data[data.size()-1].freq<<out;
+	cout<<"You're entering starting value: ";
 	double start, end, s11avg=0, sx1avg=0, s1xavg=0, sxxavg=0;
 	int cnt=0; 
-	while (cin>>start>>end){
+	while (cin>>start){
+		cout<<"You're entering ending value: ";
+		cin>>end;
 		if (start>end){
 			cout<<"Starting point is greater than end point, please re-enter"<<out;
+			cout<<"You're entering starting value: ";
 		}
 		else
 			break;
