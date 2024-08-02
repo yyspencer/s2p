@@ -19,6 +19,7 @@ typedef pair<int, int> pii;
 #define out '\n'
 const ll INF = 0x3f3f3f3f3f3f3f3f;
 const int inf=0x3f3f3f3f;
+
 struct SParameter{
 	double freq;
 	pair <double, double> s11;
@@ -39,6 +40,7 @@ bool stringToDouble(string& str, double& result) {
 }
 
 void solve(string filename){
+	data.clear();
 	vector<string> nums;
 	type=0;
 	while (data.size()){
@@ -53,7 +55,6 @@ void solve(string filename){
 	while(getline(input, line)){//extract input to lines
 		nums.clear();
 		//after stores the line after replacing spaces with tabs
-		transform(line.begin(), line.end(), line.begin(), ::tolower);
 		int pos=0;
 		for (int i=0; i<line.size(); ++i){
 			if (line[i]==' '){
@@ -62,41 +63,33 @@ void solve(string filename){
 			}
 		}
 		line.erase(line.begin(), line.begin()+pos);
-		if (!isdigit(line[0] && type==0)){
-			//cout<<"typing "<<type<<out;
+		if (!isdigit(line[0]) && !type){
+			transform(line.begin(), line.end(), line.begin(), ::tolower);
 			size_t found = line.find("mag");
 			if (found != string::npos){
 				type=1;
-				break;
 			}
 			found = line.find("db");
 			if (found != string::npos){
 				type=2;
-				break;
 			}
 			found = line.find("im");
 			if (found != string::npos){
 				type=3;
-				break;
 			}
 			continue;
 		}
-		if (type==0){
+		if (!type){
 			cout<<"no file format found, please enter data type"<<out;
 			cout<<"Mag+Ang press 1"<<out;
 			cout<<"dB+Ang press 2"<<out;
 			cout<<"Re+Im press 3"<<out;
 			cin>>type;
 		}
-		for (int i=0; i<line.size(); ++i){
-			if (line[i]==' ')
-				line[i]='\t';
-		}
 		stringstream ss(line);
 		while (getline(ss, s, '\t')){
 			nums.pub(s);
 		}
-		cout<<nums.size()<<out;
 		for (int i=0; i<nums.size(); ++i){
 			if (nums[i].size()==0){
 				nums.erase(nums.begin()+i);
@@ -135,14 +128,17 @@ void solve(string filename){
 		}
 		data.pub(tmp);
 	}
+	/*
 	for (int i=0; i<data.size(); ++i){
 		cout<<i<<": "<<data[i].freq<<" "<<data[i].s11val<<" "<<data[i].sx1val<<" "<<data[i].s1xval<<" "<<data[i].sxxval<<out;
 	}
+	*/
 	if (data.size()==0){
 		cout<<"Database error, no data in database"<<out;
 		return;
 	}
 	cout<<"For average, please enter starting and end points"<<out;
+	cout<<"Range is "<<data[0].freq<<" to "<<data[data.size()-1].freq<<out;
 	double start, end, s11avg=0, sx1avg=0, s1xavg=0, sxxavg=0;
 	int cnt=0; 
 	while (cin>>start>>end){
