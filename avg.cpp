@@ -22,8 +22,8 @@ struct SParameter{
 };
 
 vector<SParameter> data;
-int type;
-string stype1, stype2, stype3, stype4, unit;
+int type, unit;
+string stype1, stype2, stype3, stype4;
 
 bool stringToDouble(string& str, double& result) {
     std::stringstream ss(str);
@@ -101,6 +101,46 @@ void solve(string filename){
 			}
 			continue;
 		}
+		if (stype1=="" && !isdigit(line[0])){
+			int current=0;
+			for (int i=0; i<line.size(); ++i){
+				if (line[i]=='s'){
+					if (current==0){
+						stype1+=line[i];
+						stype1+=line[i+1];
+						stype1+=line[i+2];
+					}
+					else if (current==1){
+						stype2+=line[i];
+						stype2+=line[i+1];
+						stype2+=line[i+2];
+					}
+					else if (current==2){
+						stype3+=line[i];
+						stype3+=line[i+1];
+						stype3+=line[i+2];
+					}
+					else{
+						stype4+=line[i];
+						stype4+=line[i+1];
+						stype4+=line[i+2];
+					}
+					current++;
+				}
+			}
+		}
+		size_t found=line.find("khz");
+		if (found != string::npos){
+			unit=1000;
+		}
+		found=line.find("mhz");
+		if (found != string::npos){
+			unit=1000000;
+		}
+		found=line.find("ghz");
+		if (found != string::npos){
+			unit=1000000000;
+		}
 		if (!type){
 			cout<<"no file format found, please enter data type"<<out;
 			cout<<"Mag+Ang press 1"<<out;
@@ -147,7 +187,19 @@ void solve(string filename){
 				tmp.stype4val=20*log10(sqrt(tmp.sxx.X*tmp.sxx.X+tmp.sxx.Y*tmp.sxx.Y));
 				break;
 		}
-		tmp.freq/=1000000;
+		if (unit==1){
+			//hz
+			tmp.freq/=1000000;
+		}
+		else if (unit==1000){
+			//khz
+			tmp.freq/=1000;
+		}
+		else if (unit==1000000000){
+			//ghz
+			tmp.freq*=1000;
+		}
+		//mhz can be ignored
 		data.pub(tmp);
 	}
 	for (int i=0; i<data.size(); ++i){
@@ -204,7 +256,7 @@ int main(){
 		cin>>exit;
 		if (exit=='c'){
 			stype1=stype2=stype3=stype4="";
-			unit="Hz";
+			unit=1;
 			string s;
 			cout<<"please enter file name"<<out;
 			cin>>s;
