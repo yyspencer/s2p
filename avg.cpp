@@ -1,12 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cmath>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <cctype>
-#include <utility>
+#include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
 typedef pair<ll,ll> pll;
@@ -27,11 +19,11 @@ struct SParameter{
 	pair <double, double> s1x;
 	pair <double, double> sxx;
 	double s11val, sx1val, s1xval, sxxval;
-	string s11type="", sx1type="", s1xtype="", sxxtype="", unit="";
 };
 
 vector<SParameter> data;
 int type;
+string stype1, stype2, stype3, stype4, unit;
 
 bool stringToDouble(string& str, double& result) {
     std::stringstream ss(str);
@@ -54,6 +46,7 @@ void solve(string filename){
 	string line, s; //line is the read line, and nums stores the values
 	while(getline(input, line)){//extract input to lines
 		nums.clear();
+		SParameter tmp;
 		//after stores the line after replacing spaces with tabs
 		int pos=0;
 		for (int i=0; i<line.size(); ++i){
@@ -65,17 +58,46 @@ void solve(string filename){
 		line.erase(line.begin(), line.begin()+pos);
 		if (!isdigit(line[0]) && !type){
 			transform(line.begin(), line.end(), line.begin(), ::tolower);
-			size_t found = line.find("mag");
+			size_t found=line.find("freq");
 			if (found != string::npos){
-				type=1;
-			}
-			found = line.find("db");
-			if (found != string::npos){
-				type=2;
-			}
-			found = line.find("im");
-			if (found != string::npos){
-				type=3;
+				found = line.find("mag");
+				if (found != string::npos){
+					type=1;
+				}
+				found = line.find("db");
+				if (found != string::npos){
+					type=2;
+				}
+				found = line.find("im");
+				if (found != string::npos){
+					type=3;
+				}
+				int current=0;
+				for (int i=0; i<line.size(); ++i){
+					if (line[i]=='s'){
+						if (current==0){
+							stype1+=line[i];
+							stype1+=line[i+1];
+							stype1+=line[i+2];
+						}
+						else if (current==1){
+							stype2+=line[i];
+							stype2+=line[i+1];
+							stype2+=line[i+2];
+						}
+						else if (current==2){
+							stype3+=line[i];
+							stype3+=line[i+1];
+							stype3+=line[i+2];
+						}
+						else{
+							stype4+=line[i];
+							stype4+=line[i+1];
+							stype4+=line[i+2];
+						}
+						current++;
+					}
+				}
 			}
 			continue;
 		}
@@ -96,7 +118,6 @@ void solve(string filename){
 				i-=1;
 			}
 		}
-		SParameter tmp;
 		stringToDouble(nums[0], tmp.freq);
 		stringToDouble(nums[1], tmp.s11.X);
 		stringToDouble(nums[2], tmp.s11.Y);
@@ -129,17 +150,15 @@ void solve(string filename){
 		tmp.freq/=1000000;
 		data.pub(tmp);
 	}
-	/*
 	for (int i=0; i<data.size(); ++i){
 		cout<<i<<": "<<data[i].freq<<" "<<data[i].s11val<<" "<<data[i].sx1val<<" "<<data[i].s1xval<<" "<<data[i].sxxval<<out;
 	}
-	*/
 	if (data.size()==0){
 		cout<<"Database error, no data in database"<<out;
 		return;
 	}
 	cout<<"For average, please enter starting and end points in MHz"<<out;
-	cout<<"Range is "<<data[0].freq<<" to "<<data[data.size()-1].freq<<out;
+	cout<<"Range is "<<data[0].freq<<" to "<<data[data.size()-1].freq<<" MHz"<<out;
 	cout<<"You're entering starting value: ";
 	double start, end, s11avg=0, sx1avg=0, s1xavg=0, sxxavg=0;
 	int cnt=0; 
@@ -170,16 +189,22 @@ void solve(string filename){
 	sx1avg/=cnt;
 	s1xavg/=cnt;
 	sxxavg/=cnt;
-	cout<<"s11avg sx1avg s1xavg sxxavg"<<out;
-	cout<<s11avg<<" "<<sx1avg<<" "<<s1xavg<<" "<<sxxavg<<out;
+	cout<<"The average values for the range are"<<out;
+	cout<<stype1<<": "<<s11avg<<out;
+	cout<<stype2<<": "<<sx1avg<<out;
+	cout<<stype3<<": "<<s1xavg<<out;
+	cout<<stype4<<": "<<sxxavg<<out;
 	input.close();
 }
+
 int main(){
 	char exit='c';
 	while (exit!='q'){
 		cout<<"press q to quit, c to continue"<<out;
 		cin>>exit;
 		if (exit=='c'){
+			stype1=stype2=stype3=stype4="";
+			unit="Hz";
 			string s;
 			cout<<"please enter file name"<<out;
 			cin>>s;
