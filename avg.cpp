@@ -18,7 +18,7 @@ struct SParameter{
 	pair <double, double> sx1;
 	pair <double, double> s1x;
 	pair <double, double> sxx;
-	double s11val, sx1val, s1xval, sxxval;
+	double stype1val, stype2val, stype3val, stype4val;
 };
 
 vector<SParameter> data;
@@ -129,29 +129,29 @@ void solve(string filename){
 		stringToDouble(nums[8], tmp.sxx.Y);
 		switch(type){
 			case 1:
-				tmp.s11val=20*log10(tmp.s11.X);
-				tmp.sx1val=20*log10(tmp.sx1.X);
-				tmp.s1xval=20*log10(tmp.s1x.X);
-				tmp.sxxval=20*log10(tmp.sxx.X);
+				tmp.stype1val=20*log10(tmp.s11.X);
+				tmp.stype2val=20*log10(tmp.sx1.X);
+				tmp.stype3val=20*log10(tmp.s1x.X);
+				tmp.stype4val=20*log10(tmp.sxx.X);
 				break;
 			case 2:
-				tmp.s11val=tmp.s11.X;
-				tmp.sx1val=tmp.sx1.X;
-				tmp.s1xval=tmp.s1x.X;
-				tmp.sxxval=tmp.sxx.X;
+				tmp.stype1val=tmp.s11.X;
+				tmp.stype2val=tmp.sx1.X;
+				tmp.stype3val=tmp.s1x.X;
+				tmp.stype4val=tmp.sxx.X;
 				break;
 			case 3:
-				tmp.s11val=20*log10(sqrt(tmp.s11.X*tmp.s11.X+tmp.s11.Y*tmp.s11.Y));
-				tmp.sx1val=20*log10(sqrt(tmp.sx1.X*tmp.sx1.X+tmp.sx1.Y*tmp.sx1.Y));
-				tmp.s1xval=20*log10(sqrt(tmp.s1x.X*tmp.s1x.X+tmp.s1x.Y*tmp.s1x.Y));
-				tmp.sxxval=20*log10(sqrt(tmp.sxx.X*tmp.sxx.X+tmp.sxx.Y*tmp.sxx.Y));
+				tmp.stype1val=20*log10(sqrt(tmp.s11.X*tmp.s11.X+tmp.s11.Y*tmp.s11.Y));
+				tmp.stype2val=20*log10(sqrt(tmp.sx1.X*tmp.sx1.X+tmp.sx1.Y*tmp.sx1.Y));
+				tmp.stype3val=20*log10(sqrt(tmp.s1x.X*tmp.s1x.X+tmp.s1x.Y*tmp.s1x.Y));
+				tmp.stype4val=20*log10(sqrt(tmp.sxx.X*tmp.sxx.X+tmp.sxx.Y*tmp.sxx.Y));
 				break;
 		}
 		tmp.freq/=1000000;
 		data.pub(tmp);
 	}
 	for (int i=0; i<data.size(); ++i){
-		cout<<i<<": "<<data[i].freq<<" "<<data[i].s11val<<" "<<data[i].sx1val<<" "<<data[i].s1xval<<" "<<data[i].sxxval<<out;
+		cout<<i<<": "<<data[i].freq<<" "<<data[i].stype1val<<" "<<data[i].stype2val<<" "<<data[i].stype3val<<" "<<data[i].stype4val<<out;
 	}
 	if (data.size()==0){
 		cout<<"Database error, no data in database"<<out;
@@ -175,10 +175,10 @@ void solve(string filename){
 	for (int i=0; i<data.size(); ++i){
 		if (data[i].freq>=start && data[i].freq<=end){
 			cnt++;
-			s11avg+=data[i].s11val;
-			sx1avg+=data[i].sx1val;
-			s1xavg+=data[i].s1xval;
-			sxxavg+=data[i].sxxval;
+			s11avg+=data[i].stype1val;
+			sx1avg+=data[i].stype2val;
+			s1xavg+=data[i].stype3val;
+			sxxavg+=data[i].stype4val;
 		}
 	}
 	if (cnt==0){
