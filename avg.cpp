@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+//file system???
 using namespace std;
 typedef long long ll;
 typedef pair<ll,ll> pll;
@@ -45,18 +46,11 @@ void solve(string filename){
 	}
 	string line, s; //line is the read line, and nums stores the values
 	while(getline(input, line)){//extract input to lines
+		//cout<<line<<out;
 		nums.clear();
 		SParameter tmp;
 		//after stores the line after replacing spaces with tabs
-		int pos=0;
-		for (int i=0; i<line.size(); ++i){
-			if (line[i]==' '){
-				pos=i;
-				break;
-			}
-		}
-		line.erase(line.begin(), line.begin()+pos);
-		if (!isdigit(line[0]) && !type){
+		if (!isdigit(line[0])){
 			transform(line.begin(), line.end(), line.begin(), ::tolower);
 			size_t found=line.find("freq");
 			if (found != string::npos){
@@ -99,12 +93,24 @@ void solve(string filename){
 					}
 				}
 			}
+			found=line.find("khz");
+			if (found != string::npos){
+				unit=1000;
+			}
+			found=line.find("mhz");
+			if (found != string::npos){
+				unit=1000000;
+			}
+			found=line.find("ghz");
+			if (found != string::npos){
+				unit=1000000000;
+			}
 			continue;
 		}
 		if (stype1=="" && !isdigit(line[0])){
 			int current=0;
 			for (int i=0; i<line.size(); ++i){
-				if (line[i]=='s'){
+				if (line[i]=='s' && i+2<line.size()){
 					if (current==0){
 						stype1+=line[i];
 						stype1+=line[i+1];
@@ -129,18 +135,6 @@ void solve(string filename){
 				}
 			}
 		}
-		size_t found=line.find("khz");
-		if (found != string::npos){
-			unit=1000;
-		}
-		found=line.find("mhz");
-		if (found != string::npos){
-			unit=1000000;
-		}
-		found=line.find("ghz");
-		if (found != string::npos){
-			unit=1000000000;
-		}
 		if (!type){
 			cout<<"no file format found, please enter data type"<<out;
 			cout<<"Mag+Ang press 1"<<out;
@@ -158,6 +152,8 @@ void solve(string filename){
 				i-=1;
 			}
 		}
+		if (!nums.size())
+			cout<<"line extraction error"<<out;
 		stringToDouble(nums[0], tmp.freq);
 		stringToDouble(nums[1], tmp.s11.X);
 		stringToDouble(nums[2], tmp.s11.Y);
@@ -202,57 +198,72 @@ void solve(string filename){
 		//mhz can be ignored
 		data.pub(tmp);
 	}
+	if (!data.size()){
+		cout<<"Data extraction error"<<out;
+		return;
+	}
+	/*
 	for (int i=0; i<data.size(); ++i){
 		cout<<i<<": "<<data[i].freq<<" "<<data[i].stype1val<<" "<<data[i].stype2val<<" "<<data[i].stype3val<<" "<<data[i].stype4val<<out;
 	}
+	*/
 	if (data.size()==0){
 		cout<<"Database error, no data in database"<<out;
 		return;
 	}
-	cout<<"For average, please enter starting and end points in MHz"<<out;
-	cout<<"Range is "<<data[0].freq<<" to "<<data[data.size()-1].freq<<" MHz"<<out;
-	cout<<"You're entering starting value: ";
-	double start, end, s11avg=0, sx1avg=0, s1xavg=0, sxxavg=0;
-	int cnt=0; 
-	while (cin>>start){
-		cout<<"You're entering ending value: ";
-		cin>>end;
-		if (start>end){
-			cout<<"Starting point is greater than end point, please re-enter"<<out;
-			cout<<"You're entering starting value: ";
-		}
-		else
+	char dec='c';
+	while (dec!='q'){
+		cout<<"Do you wish to continue calculating average on "<<filename<<"?"<<out;
+		cout<<"press c to continue, q to quit: ";
+		cin>>dec;
+		if (dec=='q'){
 			break;
-	}
-	for (int i=0; i<data.size(); ++i){
-		if (data[i].freq>=start && data[i].freq<=end){
-			cnt++;
-			s11avg+=data[i].stype1val;
-			sx1avg+=data[i].stype2val;
-			s1xavg+=data[i].stype3val;
-			sxxavg+=data[i].stype4val;
 		}
+		cout<<"For average, please enter starting and end points in MHz"<<out;
+		cout<<"Range is "<<data[0].freq<<" to "<<data[data.size()-1].freq<<" MHz"<<out;
+		cout<<"You're entering starting value: ";
+		double start, end, s11avg=0, sx1avg=0, s1xavg=0, sxxavg=0;
+		int cnt=0; 
+		while (cin>>start){
+			cout<<"You're entering ending value: ";
+			cin>>end;
+			if (start>end){
+				cout<<"Starting point is greater than end point, please re-enter"<<out;
+				cout<<"You're entering starting value: ";
+			}
+			else
+				break;
+		}
+		for (int i=0; i<data.size(); ++i){
+			if (data[i].freq>=start && data[i].freq<=end){
+				cnt++;
+				s11avg+=data[i].stype1val;
+				sx1avg+=data[i].stype2val;
+				s1xavg+=data[i].stype3val;
+				sxxavg+=data[i].stype4val;
+			}
+		}
+		if (cnt==0){
+			cout<<"there are no valid numbers in this database, please try again"<<out;
+			return;
+		}
+		s11avg/=cnt;
+		sx1avg/=cnt;
+		s1xavg/=cnt;
+		sxxavg/=cnt;
+		cout<<"The average values for the range are"<<out;
+		cout<<stype1<<": "<<s11avg<<out;
+		cout<<stype2<<": "<<sx1avg<<out;
+		cout<<stype3<<": "<<s1xavg<<out;
+		cout<<stype4<<": "<<sxxavg<<out;
 	}
-	if (cnt==0){
-		cout<<"there are no valid numbers in this database, please try again"<<out;
-		return;
-	}
-	s11avg/=cnt;
-	sx1avg/=cnt;
-	s1xavg/=cnt;
-	sxxavg/=cnt;
-	cout<<"The average values for the range are"<<out;
-	cout<<stype1<<": "<<s11avg<<out;
-	cout<<stype2<<": "<<sx1avg<<out;
-	cout<<stype3<<": "<<s1xavg<<out;
-	cout<<stype4<<": "<<sxxavg<<out;
 	input.close();
 }
 
 int main(){
 	char exit='c';
 	while (exit!='q'){
-		cout<<"press q to quit, c to continue"<<out;
+		cout<<"press q to quit, c to continue to perform on new file: ";
 		cin>>exit;
 		if (exit=='c'){
 			stype1=stype2=stype3=stype4="";
