@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-//file system???
+#include <dirent.h>
 using namespace std;
 typedef long long ll;
 typedef pair<ll,ll> pll;
@@ -23,8 +23,31 @@ struct SParameter{
 };
 
 vector<SParameter> data;
+vector<string> filename;
 int type, unit;
 string stype1, stype2, stype3, stype4;
+
+void list_files_in_directory(const string& path) {
+	filename.clear();
+    DIR *dir;
+    struct dirent *ent;
+    int filecount=0;
+    if ((dir = opendir(path.c_str())) != NULL) {
+        // Print all the files and directories within the directory
+        while ((ent = readdir(dir)) != NULL) {
+            // Skip the "." and ".." entries
+            if (ent->d_name[0] != '.') {
+            	filecount++;
+                cout <<filecount<<": "<< ent->d_name << endl;
+                filename.pub(ent->d_name);
+            }
+        }
+        closedir(dir);
+    } else {
+        // Could not open directory
+        perror("Could not open directory");
+    }
+}
 
 bool stringToDouble(string& str, double& result) {
     std::stringstream ss(str);
@@ -287,13 +310,14 @@ int main(){
 		cout<<"press q to quit, c to continue to perform on new file: ";
 		cin>>exit;
 		if (exit=='c'){
+			string path = "./"; // specify the directory path here
+		    list_files_in_directory(path);
 			stype1=stype2=stype3=stype4="";
 			unit=1;
-			string s;
-			cout<<"please enter file name"<<out;
-			cin>>s;
-			s+=".s2p";
-			solve(s);
+			int name;
+			cout<<"please enter file number"<<out;
+			cin>>name;
+			solve(filename[name-1]);
 		}
 		else if (exit=='q')
 			break;
