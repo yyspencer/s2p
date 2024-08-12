@@ -32,6 +32,12 @@ bool stringToDouble(string& str, double& result) {
     return !ss.fail() && ss.eof(); // Ensure entire string was converted
 }
 
+inline void ltrim(string &s) {
+    s.erase(s.begin(), find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !isspace(ch);
+    }));
+}
+
 void solve(string filename){
 	data.clear();
 	vector<string> nums;
@@ -46,6 +52,7 @@ void solve(string filename){
 	}
 	string line, s; //line is the read line, and nums stores the values
 	while(getline(input, line)){//extract input to lines
+		ltrim(line);
 		//cout<<line<<out;
 		nums.clear();
 		SParameter tmp;
@@ -67,29 +74,42 @@ void solve(string filename){
 					type=3;
 				}
 				int current=0;
+				string ttmp;
 				for (int i=0; i<line.size(); ++i){
 					if (line[i]=='s'){
 						if (current==0){
 							stype1+=line[i];
 							stype1+=line[i+1];
 							stype1+=line[i+2];
+							ttmp=line.substr(i,3);
+							current++;
 						}
 						else if (current==1){
+							if (line.substr(i,3)==stype1)
+								continue;
 							stype2+=line[i];
 							stype2+=line[i+1];
 							stype2+=line[i+2];
+							current++;
 						}
 						else if (current==2){
+							if (line.substr(i,3)==stype2)
+								continue;
 							stype3+=line[i];
 							stype3+=line[i+1];
 							stype3+=line[i+2];
+							current++;
 						}
 						else{
+							if (line.substr(i,3)==stype3)
+								continue;
+							if (stype4!="")
+								continue;
 							stype4+=line[i];
 							stype4+=line[i+1];
 							stype4+=line[i+2];
+							current++;
 						}
-						current++;
 					}
 				}
 			}
@@ -143,7 +163,7 @@ void solve(string filename){
 			cin>>type;
 		}
 		stringstream ss(line);
-		while (getline(ss, s, '\t')){
+		while (ss>>s){
 			nums.pub(s);
 		}
 		for (int i=0; i<nums.size(); ++i){
@@ -152,6 +172,7 @@ void solve(string filename){
 				i-=1;
 			}
 		}
+		//cout<<"line size "<<nums.size()<<out;
 		if (!nums.size())
 			cout<<"line extraction error"<<out;
 		stringToDouble(nums[0], tmp.freq);
